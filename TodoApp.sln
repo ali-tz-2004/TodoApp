@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo-App.Api", "Todo-App.Api\Todo-App.Api.csproj", "{C7E53707-91B8-4BF7-A111-97AE8E33A713}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Api", "TodoApp.Api\TodoApp.Api.csproj", "{C7E53707-91B8-4BF7-A111-97AE8E33A713}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo-App.Application", "Todo-App.Application\Todo-App.Application.csproj", "{CD938699-4628-4685-AD97-3297A5A892DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Application", "TodoApp.Application\TodoApp.Application.csproj", "{CD938699-4628-4685-AD97-3297A5A892DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo-App.Core", "Todo-App.Core\Todo-App.Core.csproj", "{24A93163-7251-4265-B156-657B1BDE0107}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Core", "TodoApp.Core\TodoApp.Core.csproj", "{24A93163-7251-4265-B156-657B1BDE0107}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo-App.Infrastructure", "Todo-App.Infrastructure\Todo-App.Infrastructure.csproj", "{49BFF953-D6AE-4256-9543-E7F7D3CD5B58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Infrastructure", "TodoApp.Infrastructure\TodoApp.Infrastructure.csproj", "{49BFF953-D6AE-4256-9543-E7F7D3CD5B58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Common", "TodoApp.Common\TodoApp.Common.csproj", "{12957476-F101-4838-BAC8-95CEC90B5B0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +38,9 @@ Global
 		{49BFF953-D6AE-4256-9543-E7F7D3CD5B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49BFF953-D6AE-4256-9543-E7F7D3CD5B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49BFF953-D6AE-4256-9543-E7F7D3CD5B58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12957476-F101-4838-BAC8-95CEC90B5B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12957476-F101-4838-BAC8-95CEC90B5B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12957476-F101-4838-BAC8-95CEC90B5B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12957476-F101-4838-BAC8-95CEC90B5B0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

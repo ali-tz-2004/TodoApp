@@ -4,7 +4,7 @@ public class BaseEntity<TKey>
 {
     public TKey Id { get; private set; } 
     public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
     public bool IsDelete { get; private set; }
     
     public BaseEntity()
@@ -21,7 +21,7 @@ public class BaseEntity<TKey>
         IsDelete = false;
     }
     
-    public void UpdateBase(long userId)
+    public void UpdateBase()
     {
         UpdatedAt =  DateTime.Now;
     }

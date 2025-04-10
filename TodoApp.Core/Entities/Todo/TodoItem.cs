@@ -7,7 +7,7 @@ public class TodoItem : BaseEntity<int>
 {
     public string Title { get; private set; }
     public string? Description { get; private set; }
-    public DateTime? DueDate { get; private set; }
+    public DateOnly? DueDate { get; private set; }
     public bool IsCompleted { get; private set; }
     public int CategoryId { get; private set; }
     public Category Category { get; private set; } = null!;
@@ -19,14 +19,20 @@ public class TodoItem : BaseEntity<int>
         
     }
 
-    public TodoItem(string title, string? description, DateTime? dueDate, bool isCompleted, int categoryId, Guid userId)
+    public TodoItem(string title, string? description, DateOnly? dueDate, int categoryId, Guid userId)
     {
         Title = title;
         Description = description;
         DueDate = dueDate;
-        IsCompleted = isCompleted;
+        IsCompleted = false;
         CategoryId = categoryId;
         UserId = userId;
+    }
+
+    public static TodoItem CreateTodo(string title, string? description, DateOnly? dueDate, int categoryId, Guid userId)
+    {
+        var user = new TodoItem(title, description, dueDate, categoryId, userId);
+        return user;
     }
     
 }

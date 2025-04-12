@@ -10,6 +10,6 @@ public class TodoMapper: IEntityTypeConfiguration<TodoItem>
     {
         builder.ToTable(nameof(TodoAppQueryDbContext.TodoItems), schema: TodoAppDbSchema.Todo);
         builder.Property(x=> x.Title).IsRequired().HasMaxLength(100);
-        builder.Property(x=> x.Description).IsRequired().HasMaxLength(1000);
+        builder.Property(x=> x.Description).HasMaxLength(1000);
     }
 }

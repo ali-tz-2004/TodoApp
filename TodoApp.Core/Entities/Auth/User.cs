@@ -19,6 +19,18 @@ public class User : BaseEntity<Guid>
         Password = password;
         PasswordSalt = passwordSalt;
     }
+
+    public static User CreateUser(string userName, string email, string password, string passwordSalt)
+    {
+        return new User(userName, email, password, passwordSalt);
+    }
+    
+    public static User CreateUser(Guid id, string userName, string email, string password, string passwordSalt)
+    {
+        var user = new User(userName, email, password, passwordSalt);
+        user.Id = id;
+        return user;
+    }
     
     public ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
 }

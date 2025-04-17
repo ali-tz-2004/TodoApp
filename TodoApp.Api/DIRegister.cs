@@ -22,6 +22,7 @@ public static class DIRegister
         services.AddScoped<IUserCommandRepository, UserCommandRepository>();
         services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         services.AddScoped<ITodoCommandRepository, TodoCommandRepository>();
+        services.AddScoped<ITodoQueryRepository, TodoQueryRepository>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IEncryptionUtility, EncryptionUtility>();

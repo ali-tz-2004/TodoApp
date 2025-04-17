@@ -4,6 +4,7 @@ namespace TodoApp.Core.Interfaces.Repositories.Todo;
 
 public interface ITodoQueryRepository
 {
-    TodoItem GetById(int id);
-    List<TodoItem> GetAll();
+    Task<TodoItem> GetById(int id, CancellationToken cancellationToken);
+    Task<List<TodoItem>> GetAll(Guid userId, CancellationToken cancellationToken);
+    Task<bool> ExistsCategoryAsync(int categoryId, Guid userId, CancellationToken cancellationToken);
 }

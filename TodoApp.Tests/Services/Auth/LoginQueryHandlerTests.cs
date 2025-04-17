@@ -30,7 +30,7 @@ public class LoginQueryHandlerTests
         var userRepoMock = new Mock<IUserQueryRepository>();
         var encryptionMock = new Mock<IEncryptionUtility>();
 
-        userRepoMock.Setup(u => u.Login(request.UserName, request.Password)).ReturnsAsync(user);
+        userRepoMock.Setup(u => u.Login(request.UserName, request.Password, CancellationToken.None)).ReturnsAsync(user);
         encryptionMock.Setup(e => e.GetSHA256(password, salt)).Returns(hashedPassword);
         encryptionMock.Setup(e => e.GetNewToken(userId)).Returns(token);
 
@@ -43,7 +43,7 @@ public class LoginQueryHandlerTests
         Assert.Equal(request.UserName, result.UserName);
         Assert.Equal(token, result.Token);
         
-        userRepoMock.Verify(u => u.Login(request.UserName, request.Password), Times.Once);
+        userRepoMock.Verify(u => u.Login(request.UserName, request.Password, CancellationToken.None), Times.Once);
         encryptionMock.Verify(e => e.GetSHA256(password, salt), Times.Once);
         encryptionMock.Verify(e => e.GetNewToken(userId), Times.Once);
     }

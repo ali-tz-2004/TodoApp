@@ -1,6 +1,7 @@
 using MediatR;
 using TodoApp.Application.Dto.Auth.Request;
 using TodoApp.Application.Dto.Auth.Response;
+using TodoApp.Common.Exceptions;
 using TodoApp.Common.Utilities;
 using TodoApp.Core.Interfaces.Repositories.Auth;
 
@@ -13,7 +14,7 @@ public class LoginQueryHandler(IUserQueryRepository userQueryRepository, IEncryp
         var user = await userQueryRepository.Login(request.UserName, request.Password);
         
         var hashPassword = encryptionUtility.GetSHA256(request.Password, user.PasswordSalt);
-        if (user.Password != hashPassword) throw new Exception("invalid password");
+        if (user.Password != hashPassword) throw new NotFoundException("Invalid username or password");
         
         var token = encryptionUtility.GetNewToken(user.Id);
 

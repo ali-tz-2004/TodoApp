@@ -10,5 +10,11 @@ public class CategoryMapper : IEntityTypeConfiguration<Category>
     {
         builder.ToTable(nameof(TodoAppQueryDbContext.Categories), schema: TodoAppDbSchema.Todo);
         builder.Property(x=> x.Name).IsRequired().HasMaxLength(100);
+        
+        builder
+            .HasOne(x => x.User)
+            .WithMany(u => u.Categories)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

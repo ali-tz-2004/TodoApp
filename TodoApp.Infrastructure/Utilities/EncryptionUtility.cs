@@ -43,6 +43,8 @@ public class EncryptionUtility : IEncryptionUtility
                 new Claim("userId", userId.ToString()),
             }),
             Expires = DateTime.UtcNow.AddMinutes(configs.TokenTimeout),
+            Issuer = configs.TokenIssuer,
+            Audience = configs.TokenAudience,
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

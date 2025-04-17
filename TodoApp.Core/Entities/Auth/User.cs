@@ -10,6 +10,9 @@ public class User : BaseEntity<Guid>
     public string Password { get; private set; }
     public string PasswordSalt { get; private set; }
     
+    public ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
+    
     private User() { }
     
     public User(string userName, string email, string password, string passwordSalt)
@@ -31,6 +34,4 @@ public class User : BaseEntity<Guid>
         user.Id = id;
         return user;
     }
-    
-    public ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using TodoApp.Common.Exceptions;
+using TodoApp.Common.ResponseHanlder;
 
 namespace TodoApp.Api.ExceptionHandler;
 
@@ -25,10 +26,10 @@ public static class ExceptionMiddlewareExtensions
 
                 context.Response.StatusCode = statusCode;
 
-                await context.Response.WriteAsJsonAsync(new
+                await context.Response.WriteAsJsonAsync(new ApiResponse
                 {
-                    errorMessage = ex?.Message,
-                    status = statusCode
+                    Message = ex?.Message ?? string.Empty,
+                    CodeStatus = statusCode
                 });
             });
         });

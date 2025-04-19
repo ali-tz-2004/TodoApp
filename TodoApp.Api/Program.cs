@@ -6,7 +6,6 @@ using TodoApp.Api;
 using TodoApp.Api.BehaviorHandler;
 using TodoApp.Api.ExceptionHandler;
 using TodoApp.Application.Services.Auth.Command;
-using TodoApp.Common.Exceptions;
 using TodoApp.Infrastructure.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,9 +55,10 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();  
 }
 
-app.UseCustomExceptionHandler();
 
 app.UseHttpsRedirection();
+
+app.UseCustomExceptionHandler();
 
 app.UseAuthentication();
 app.UseAuthorization();

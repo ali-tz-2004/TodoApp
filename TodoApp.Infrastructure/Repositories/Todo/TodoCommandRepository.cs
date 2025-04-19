@@ -18,10 +18,4 @@ public class TodoCommandRepository(TodoAppCommandDbContext dbContext) : ITodoCom
         todoItem.UpdateBase();
         dbContext.TodoItems.Update(todoItem);
     }
-
-    public async Task<bool> ExistsCategoryAsync(int categoryId, CancellationToken cancellationToken)
-    {
-        var existsCategory = await dbContext.Categories.AnyAsync(c => c.Id == categoryId, cancellationToken);
-        return existsCategory;
-    }
 }

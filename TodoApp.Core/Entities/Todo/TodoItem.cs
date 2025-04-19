@@ -35,4 +35,12 @@ public class TodoItem : BaseEntity<int>
         return user;
     }
     
+    public void UpdateTodo(string title, string? description, DateOnly? dueDate, int categoryId, Guid userId)
+    {
+        Title = title;
+        Description = description;
+        DueDate = dueDate;
+        CategoryId = categoryId;
+        UserId = userId;
+    }
 }

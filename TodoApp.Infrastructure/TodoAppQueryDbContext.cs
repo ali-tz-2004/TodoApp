@@ -22,5 +22,9 @@ public class TodoAppQueryDbContext: DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CategoryMapper).Assembly);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TodoMapper).Assembly);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserMapper).Assembly);
+        
+        modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDelete);
+        modelBuilder.Entity<Category>().HasQueryFilter(x => !x.IsDelete);
+        modelBuilder.Entity<TodoItem>().HasQueryFilter(x => !x.IsDelete);
     }
 }

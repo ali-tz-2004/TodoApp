@@ -23,4 +23,10 @@ public class TodoCommandRepository(TodoAppCommandDbContext dbContext) : ITodoCom
     {
         dbContext.Entry(todoItem).Property(x => x.IsCompleted).IsModified = true;
     }
+
+    public void DeleteTodo(TodoItem todoItem)
+    {
+        todoItem.DeleteBase();
+        dbContext.Update(todoItem);
+    }
 }

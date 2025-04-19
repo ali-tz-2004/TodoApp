@@ -24,4 +24,9 @@ public class BaseEntity<TKey>
     {
         UpdatedAt =  DateTime.Now;
     }
+
+    public void DeleteBase()
+    {
+        IsDelete = true;
+    }
 }

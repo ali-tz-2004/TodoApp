@@ -9,6 +9,7 @@ namespace TodoApp.Api.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+// Authorization
 public class AuthController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

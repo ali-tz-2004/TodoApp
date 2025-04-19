@@ -12,7 +12,6 @@ namespace TodoApp.Api.Controllers;
 [Route("[controller]/[action]")]
 public class TodoController(IMediator mediator) : ControllerBase
 {
-    // Authorization
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<ApiResponse>> CreateTodo([FromBody] CreateTodoRequest createTodoRequest)
@@ -50,6 +49,14 @@ public class TodoController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ApiResponse>> Status([FromBody] ChangeStatusTodoRequest changeStatusTodoRequest)
     {
         await mediator.Send(changeStatusTodoRequest);
+        return Ok(ApiResponse.SuccessResponse());
+    }
+    
+    [Authorize]
+    [HttpDelete]
+    public async Task<ActionResult<ApiResponse>> Delete([FromBody] DeleteTodoRequest deleteTodoRequest)
+    {
+        await mediator.Send(deleteTodoRequest);
         return Ok(ApiResponse.SuccessResponse());
     }
 }

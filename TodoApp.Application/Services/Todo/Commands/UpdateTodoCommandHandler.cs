@@ -14,7 +14,7 @@ public class UpdateTodoCommandHandler(ITodoCommandRepository todoCommandReposito
         if (!await todoQueryRepository.ExistsCategoryAsync(request.CategoryId, request.UserId, cancellationToken))
             throw new NotFoundException("Category not found");
         
-        var todoItem = await todoQueryRepository.GetById(request.Id, cancellationToken);
+        var todoItem = await todoQueryRepository.GetById(request.Id, request.UserId, cancellationToken);
 
         todoItem.UpdateTodo(request.Title, request.Description, request.DueDate, request.CategoryId, request.UserId);
         

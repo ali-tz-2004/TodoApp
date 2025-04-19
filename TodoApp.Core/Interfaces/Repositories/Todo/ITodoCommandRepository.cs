@@ -6,4 +6,5 @@ public interface ITodoCommandRepository
 {
     void CreateTodo(TodoItem todoItem);
     void UpdateTodo(TodoItem todoItem);
+    void ChangeStatus(TodoItem todoItem);
 }

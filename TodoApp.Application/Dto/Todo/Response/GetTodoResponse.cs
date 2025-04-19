@@ -3,7 +3,7 @@ using TodoApp.Core.Entities.Todo;
 
 namespace TodoApp.Application.Dto.Todo.Response;
 
-public class GetAllTodoResponse(TodoItem todoItem)
+public class GetTodoResponse(TodoItem todoItem)
 {
     public int Id { get; set; } = todoItem.Id;
     public string Title { get; set; } = todoItem.Title;
@@ -12,5 +12,7 @@ public class GetAllTodoResponse(TodoItem todoItem)
     public string? DuePersianDate { get; set; } = todoItem.DueDate.GetUtcNow();
     public bool IsCompleted { get; set; } = todoItem.IsCompleted;
     public int CategoryId { get; set; } = todoItem.CategoryId;
+    public string Category { get; set; } = todoItem.Category.Name;
     public Guid UserId { get; set; } = todoItem.UserId;
+    public string Username { get; set; } = todoItem.User.UserName;
 }

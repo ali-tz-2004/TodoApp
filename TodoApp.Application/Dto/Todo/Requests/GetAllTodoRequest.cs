@@ -8,5 +8,6 @@ namespace TodoApp.Application.Dto.Todo.Requests;
 
 public class GetAllTodoRequest : PaginationRequest, IRequest<PaginationResponse<GetAllTodoResponse>>, IHaveUserId
 {
+    public bool IsCompleted { get; set; } = false;
     public Guid UserId { get; set; }
 }

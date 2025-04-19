@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using TodoApp.Application.Dto.Todo.Requests;
 using TodoApp.Application.Dto.Todo.Response;
 using TodoApp.Common.DtoHandler;
-using TodoApp.Common.Exceptions;
 using TodoApp.Common.ResponseHanlder;
 
 namespace TodoApp.Api.Controllers;
@@ -36,5 +35,21 @@ public class TodoController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(getAllTodoRequest);
         return Ok(ApiResponse<PaginationResponse<GetAllTodoResponse>>.SuccessResponse(result));
+    }
+    
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse>> Get([FromQuery] GetTodoRequest getTodoRequest)
+    {
+        var result = await mediator.Send(getTodoRequest);
+        return Ok(ApiResponse<GetTodoResponse>.SuccessResponse(result));
+    }
+    
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult<ApiResponse>> Status([FromBody] ChangeStatusTodoRequest changeStatusTodoRequest)
+    {
+        await mediator.Send(changeStatusTodoRequest);
+        return Ok(ApiResponse.SuccessResponse());
     }
 }

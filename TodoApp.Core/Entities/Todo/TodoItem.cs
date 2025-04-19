@@ -43,4 +43,9 @@ public class TodoItem : BaseEntity<int>
         CategoryId = categoryId;
         UserId = userId;
     }
+    
+    public void ChangeStatus(bool isCompleted)
+    {
+        IsCompleted = isCompleted;
+    }
 }

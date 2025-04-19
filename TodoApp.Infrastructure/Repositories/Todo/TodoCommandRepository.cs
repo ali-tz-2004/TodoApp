@@ -18,4 +18,9 @@ public class TodoCommandRepository(TodoAppCommandDbContext dbContext) : ITodoCom
         todoItem.UpdateBase();
         dbContext.TodoItems.Update(todoItem);
     }
+
+    public void ChangeStatus(TodoItem todoItem)
+    {
+        dbContext.Entry(todoItem).Property(x => x.IsCompleted).IsModified = true;
+    }
 }

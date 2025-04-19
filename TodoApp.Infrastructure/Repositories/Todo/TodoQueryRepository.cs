@@ -7,16 +7,17 @@ namespace TodoApp.Infrastructure.Repositories.Todo;
 
 public class TodoQueryRepository(TodoAppQueryDbContext dbContext) : ITodoQueryRepository
 {
-    public async Task<TodoItem> GetById(int id, CancellationToken cancellationToken)
+    public async Task<TodoItem> GetById(int id, Guid userId, CancellationToken cancellationToken)
     {
-        var todo = await dbContext.TodoItems.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var todo = await dbContext.TodoItems.Include(x => x.User).Include(x => x.Category)
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
         if (todo == null) throw new NotFoundException("todo not found");
         return todo;
     }
 
-    public async Task<List<TodoItem>> GetAll(Guid userId, CancellationToken cancellationToken)
+    public async Task<List<TodoItem>> GetAll(bool isCompleted, Guid userId, CancellationToken cancellationToken)
     {
-        var todoList = await dbContext.TodoItems.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        var todoList = await dbContext.TodoItems.Where(x => x.UserId == userId && x.IsCompleted == isCompleted).ToListAsync(cancellationToken);
         return todoList;
     }
 

@@ -11,7 +11,7 @@ public class GetAllTodoQueryHandler(ITodoQueryRepository todoQueryRepository) : 
 {
     public async Task<PaginationResponse<GetAllTodoResponse>> Handle(GetAllTodoRequest request, CancellationToken cancellationToken)
     {
-        var todoList = await todoQueryRepository.GetAll(request.UserId, cancellationToken);
+        var todoList = await todoQueryRepository.GetAll(request.IsCompleted, request.UserId, cancellationToken);
 
         var result = todoList.Select(x => new GetAllTodoResponse(x)).ToList();
         

@@ -34,7 +34,7 @@ public class UpdateTodoCommandHandlerTests
                 x.ExistsCategoryAsync(request.CategoryId, request.UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
     
-        _todoQueryRepository.Setup(x => x.GetById(request.Id, It.IsAny<CancellationToken>()))
+        _todoQueryRepository.Setup(x => x.GetById(request.Id, request.UserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(fakeTodoItem);
 
         var handler = new UpdateTodoCommandHandler(

@@ -2,6 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApp.Application.Dto.Todo.Requests;
+using TodoApp.Application.Dto.Todo.Response;
+using TodoApp.Common.DtoHandler;
 using TodoApp.Common.Exceptions;
 using TodoApp.Common.ResponseHanlder;
 
@@ -26,5 +28,13 @@ public class TodoController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(updateTodoRequest);
         return Ok(ApiResponse.SuccessResponse());
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse>> GetAll([FromQuery] GetAllTodoRequest getAllTodoRequest)
+    {
+        var result = await mediator.Send(getAllTodoRequest);
+        return Ok(ApiResponse<PaginationResponse<GetAllTodoResponse>>.SuccessResponse(result));
     }
 }

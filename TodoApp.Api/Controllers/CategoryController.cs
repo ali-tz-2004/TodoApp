@@ -3,13 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApp.Application.Dto.Todo.Requests;
 using TodoApp.Common.ResponseHanlder;
-using TodoApp.Core.Entities.Todo;
 
 namespace TodoApp.Api.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-
 public class CategoryController(IMediator mediator) : ControllerBase
 {
     [Authorize]
@@ -17,6 +15,14 @@ public class CategoryController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ApiResponse>> CreateCategory(CreateCategoryRequest createCategoryRequest)
     {
         await mediator.Send(createCategoryRequest);
-        return Ok(ApiResponse.SuccessResponse());
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult> UpdateCategory(UpdateCategoryRequest updateCategoryRequest)
+    {
+        await mediator.Send(updateCategoryRequest);
+        return Ok();
     }
 }

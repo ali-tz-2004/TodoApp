@@ -17,7 +17,7 @@ public class TodoController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ApiResponse>> CreateTodo([FromBody] CreateTodoRequest createTodoRequest)
     {
         await mediator.Send(createTodoRequest);
-        return Ok(ApiResponse.SuccessResponse());
+        return Ok();
     }
     
     [Authorize]
@@ -25,7 +25,7 @@ public class TodoController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<ApiResponse>> UpdateTodo([FromBody] UpdateTodoRequest updateTodoRequest)
     {
         await mediator.Send(updateTodoRequest);
-        return Ok(ApiResponse.SuccessResponse());
+        return Ok();
     }
 
     [Authorize]

@@ -27,4 +27,9 @@ public class Category : BaseEntity<int>
         var category = new Category(name, userId);
         return category;
     }
+    
+    public void UpdateCategory(string name)
+    {
+        Name = name;
+    }
 }

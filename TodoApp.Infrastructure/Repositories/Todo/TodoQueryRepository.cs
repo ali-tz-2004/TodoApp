@@ -30,7 +30,7 @@ public class TodoQueryRepository(TodoAppQueryDbContext dbContext) : ITodoQueryRe
     {
         var category = await dbContext.Categories.Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
-        if (category == null) throw new NotFoundException("todo not found");
+        if (category == null) throw new NotFoundException("category not found");
         return category;
     }
 

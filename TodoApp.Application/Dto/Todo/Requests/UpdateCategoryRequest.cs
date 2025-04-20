@@ -4,8 +4,9 @@ using TodoApp.Common.Interfaces;
 
 namespace TodoApp.Application.Dto.Todo.Requests;
 
-public class CreateCategoryRequest : IRequest, IHaveUserId
+public class UpdateCategoryRequest : IRequest, IHaveUserId
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     [JsonIgnore]
     public Guid UserId { get; set; }

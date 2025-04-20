@@ -25,4 +25,12 @@ public class CategoryController(IMediator mediator) : ControllerBase
         await mediator.Send(updateCategoryRequest);
         return Ok();
     }
+    
+    [Authorize]
+    [HttpDelete]
+    public async Task<ActionResult> DeleteCategory(DeleteCategoryRequest deleteCategoryRequest)
+    {
+        await mediator.Send(deleteCategoryRequest);
+        return Ok();
+    }
 }

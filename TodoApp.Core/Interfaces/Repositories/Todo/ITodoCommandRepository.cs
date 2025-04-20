@@ -8,4 +8,8 @@ public interface ITodoCommandRepository
     void UpdateTodo(TodoItem todoItem);
     void ChangeStatus(TodoItem todoItem);
     void DeleteTodo(TodoItem todoItem);
+    
+    void CreateCategory(Category category);
+    void UpdateCategory(Category category);
+    void DeleteCategory(Category category);
 }

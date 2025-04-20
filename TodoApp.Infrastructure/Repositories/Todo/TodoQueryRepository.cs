@@ -25,4 +25,18 @@ public class TodoQueryRepository(TodoAppQueryDbContext dbContext) : ITodoQueryRe
     {
         return await dbContext.Categories.AnyAsync(x => x.Id == categoryId && x.UserId == userId, cancellationToken);
     }
+
+    public async Task<Category> GetByIdCategory(int id, Guid userId, CancellationToken cancellationToken)
+    {
+        var category = await dbContext.Categories.Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
+        if (category == null) throw new NotFoundException("todo not found");
+        return category;
+    }
+
+    public async Task<List<Category>> GetAllCategory(Guid userId, CancellationToken cancellationToken)
+    {
+        var todoList = await dbContext.Categories.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        return todoList;
+    }
 }

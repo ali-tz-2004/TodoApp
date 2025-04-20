@@ -21,4 +21,10 @@ public class Category : BaseEntity<int>
         Name = name;
         UserId = userId;
     }
+    
+    public static Category CreateCategory(string name, Guid userId)
+    {
+        var category = new Category(name, userId);
+        return category;
+    }
 }

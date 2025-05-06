@@ -11,7 +11,7 @@ public class LoginQueryHandler(IUserQueryRepository userQueryRepository, IEncryp
 {
     public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
     {
-        var user = await userQueryRepository.Login(request.UserName, request.Password);
+        var user = await userQueryRepository.Login(request.UserName, request.Password, cancellationToken);
         
         var hashPassword = encryptionUtility.GetSHA256(request.Password, user.PasswordSalt);
         if (user.Password != hashPassword) throw new NotFoundException("Invalid username or password");

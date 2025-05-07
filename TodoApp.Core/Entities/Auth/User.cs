@@ -1,3 +1,4 @@
+using TodoApp.Common.Exceptions;
 using TodoApp.Core.Base;
 using TodoApp.Core.Entities.Todo;
 
@@ -25,13 +26,18 @@ public class User : BaseEntity<Guid>
 
     public static User CreateUser(string userName, string email, string password, string passwordSalt)
     {
+        if (string.IsNullOrWhiteSpace(userName))
+            throw new NotValidException("Username cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(email))
+            throw new NotValidException("Email cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(password))
+            throw new NotValidException("Password cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(passwordSalt))
+            throw new NotValidException("Password salt cannot be empty");
+        
         return new User(userName, email, password, passwordSalt);
-    }
-    
-    public static User CreateUser(Guid id, string userName, string email, string password, string passwordSalt)
-    {
-        var user = new User(userName, email, password, passwordSalt);
-        user.Id = id;
-        return user;
     }
 }

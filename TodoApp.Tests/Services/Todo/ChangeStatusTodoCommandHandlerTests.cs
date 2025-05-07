@@ -22,16 +22,17 @@ public class ChangeStatusTodoCommandHandlerTests
     {
         Id = _requestId,
         UserId = _userId,
-        isCompleted = false,
     };
 
     [Fact]
-    public async Task Handle_Should_Change_Status_Todo_When_Valid()
+    public async Task Handle_ValidData_ShouldChangeStatus()
     {
         var request = _request();
         
         var fakeTodoItem = new TodoItem("Old Title", "Old Desc", DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
             _categoryId, _userId);
+        
+        Assert.False(fakeTodoItem.IsCompleted);
         
         _todoQueryRepositoryMock.Setup(x => x.GetById(_requestId, _userId, CancellationToken.None))
             .ReturnsAsync(fakeTodoItem);
@@ -43,19 +44,26 @@ public class ChangeStatusTodoCommandHandlerTests
         
         _todoCommandRepositoryMock.Verify(x=>x.ChangeStatus(fakeTodoItem), Times.Once);
         _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(CancellationToken.None), Times.Once);
+        
+        Assert.True(fakeTodoItem.IsCompleted);
     }
     
     [Fact]
-    public async Task Handle_Should_ThrowNotFoundException_When_Todo_NotFound()
+    public async Task Handle_WhenUserIdOrTodoNotFound_ShouldReturnNotFound()
     {
+        _todoQueryRepositoryMock.Setup(x => x.GetById(_requestId, _userId, CancellationToken.None))
+            .ThrowsAsync(new NotFoundException("todo not found"));
+        
         var request = _request();
         
-        _todoQueryRepositoryMock.Setup(x => x.GetById(_requestId, _userId, CancellationToken.None))
-            .ThrowsAsync(new NotFoundException(nameof(TodoItem)));
-
         var handler = new ChangeStatusTodoCommandHandler(_todoCommandRepositoryMock.Object,
             _todoQueryRepositoryMock.Object, _unitOfWorkMock.Object);
         
-        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(request, CancellationToken.None));
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(request, CancellationToken.None));
+        
+        _todoCommandRepositoryMock.Verify(x=>x.ChangeStatus(It.IsAny<TodoItem>()), Times.Never);
+        _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(CancellationToken.None), Times.Never);
+        
+        Assert.Equal("todo not found", ex.Message);
     }
 }

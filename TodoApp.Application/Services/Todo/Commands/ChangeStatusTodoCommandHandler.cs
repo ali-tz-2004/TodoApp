@@ -13,7 +13,7 @@ public class ChangeStatusTodoCommandHandler(
     public async Task Handle(ChangeStatusTodoRequest request, CancellationToken cancellationToken)
     {
         var todoItem = await todoQueryRepository.GetById(request.Id, request.UserId, cancellationToken);
-        todoItem.ChangeStatus(request.isCompleted);
+        todoItem.ChangeStatus(!todoItem.IsCompleted);
         
         todoCommandRepository.ChangeStatus(todoItem);
         

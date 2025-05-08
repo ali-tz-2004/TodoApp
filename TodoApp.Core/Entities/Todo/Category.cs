@@ -1,3 +1,4 @@
+using TodoApp.Common.Exceptions;
 using TodoApp.Core.Base;
 using TodoApp.Core.Entities.Auth;
 
@@ -24,6 +25,8 @@ public class Category : BaseEntity<int>
     
     public static Category CreateCategory(string name, Guid userId)
     {
+        if (string.IsNullOrWhiteSpace(name)) throw new NotValidException("name cannot be empty.");
+        
         var category = new Category(name, userId);
         return category;
     }

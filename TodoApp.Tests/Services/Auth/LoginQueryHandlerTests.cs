@@ -10,15 +10,15 @@ namespace TodoApp.Tests.Services.Auth;
 
 public class LoginQueryHandlerTests
 {
-    private Mock<IUserQueryRepository> _userQueryRepositoryMock = new();
-    private Mock<IEncryptionUtility> _encryptionUtilityMock = new();
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock = new();
+    private readonly Mock<IEncryptionUtility> _encryptionUtilityMock = new();
 
-    private string _username = "user";
-    private string _email = "user";
-    private string _password = "123";
-    private string _salt = "random_salt";
-    private string _hashedPassword = "hashed_123";
-    private string _token = "fake_token";
+    private readonly string _username = "user";
+    private readonly string _email = "user";
+    private readonly string _password = "123";
+    private readonly string _salt = "random_salt";
+    private readonly string _hashedPassword = "hashed_123";
+    private readonly string _token = "fake_token";
     
     private LoginRequest _request() => new()
     {
@@ -27,7 +27,7 @@ public class LoginQueryHandlerTests
     };
 
     [Fact]
-    public async Task Handle_UserNotFound_ShouldThrowNotFoundException()
+    public async Task when_user_not_found()
     {
         _userQueryRepositoryMock.Setup(x => x.Login(_username, _password, CancellationToken.None))
             .Throws(new NotFoundException("Invalid username or password"));
@@ -44,7 +44,7 @@ public class LoginQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_UserFoundAndPasswordMatches_ShouldReturnLoginResponse()
+    public async Task username_and_password_are_valid()
     {
         var request = _request();
         var user = new User(_username, _email, _hashedPassword, _salt);
@@ -71,7 +71,7 @@ public class LoginQueryHandlerTests
     }
     
     [Fact]
-    public async Task Handle_UserFoundAndPasswordDontMatches_ShouldThrowNotFoundException()
+    public async Task user_and_password_are_invalid()
     {
         var user = new User(_username, _email, "_hashedPassword", _salt);
         

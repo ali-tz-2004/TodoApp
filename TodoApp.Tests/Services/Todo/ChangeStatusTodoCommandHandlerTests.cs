@@ -25,7 +25,7 @@ public class ChangeStatusTodoCommandHandlerTests
     };
 
     [Fact]
-    public async Task Handle_ValidData_ShouldChangeStatus()
+    public async Task when_change_status_valid()
     {
         var request = _request();
         
@@ -49,7 +49,7 @@ public class ChangeStatusTodoCommandHandlerTests
     }
     
     [Fact]
-    public async Task Handle_WhenUserIdOrTodoNotFound_ShouldReturnNotFound()
+    public async Task when_todo_id_or_user_id_not_found()
     {
         _todoQueryRepositoryMock.Setup(x => x.GetById(_requestId, _userId, CancellationToken.None))
             .ThrowsAsync(new NotFoundException("todo not found"));

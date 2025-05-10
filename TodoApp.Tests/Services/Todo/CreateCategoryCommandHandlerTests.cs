@@ -14,7 +14,7 @@ public class CreateCategoryCommandHandlerTests
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     
     [Fact]
-    public async Task Handle_NameCategoryOkay_CreateCategory()
+    public async Task when_create_category_valid()
     {
         var handler = new CreateCategoryCommandHandler(_todoCommandRepositoryMock.Object, _unitOfWorkMock.Object);
 
@@ -34,7 +34,7 @@ public class CreateCategoryCommandHandlerTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public async Task Handle_NameCategoryNullOrEmptyString_ShouldThrowNotValidException(string name)
+    public async Task when_category_name_is_null_or_empty_string(string name)
     {
         var handler = new CreateCategoryCommandHandler(_todoCommandRepositoryMock.Object, _unitOfWorkMock.Object);
 

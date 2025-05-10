@@ -11,13 +11,13 @@ namespace TodoApp.Tests.Services.Auth;
 
 public class RegisterCommandHandlerTests
 {
-    private Mock<IEncryptionUtility> _encryptionMock = new();
-    private Mock<IUserCommandRepository> _userRepoMock = new();
-    private Mock<IUnitOfWork> _unitOfWorkMock = new();
+    private readonly Mock<IEncryptionUtility> _encryptionMock = new();
+    private readonly Mock<IUserCommandRepository> _userRepoMock = new();
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     
-    private string _salt = Guid.NewGuid().ToString();
-    private string _hashedPassword = "passwordSalt";
-    private string _password = "password";
+    private readonly string _salt = Guid.NewGuid().ToString();
+    private readonly string _hashedPassword = "passwordSalt";
+    private readonly string _password = "password";
     
     private RegisterCommandHandler CreateHandler() =>
         new(_encryptionMock.Object, _userRepoMock.Object, _unitOfWorkMock.Object);
@@ -26,7 +26,7 @@ public class RegisterCommandHandlerTests
         => new() { UserName = username, Email = email, Password = password };
     
     [Fact]
-    public async Task Handle_UserInfoTrue_ShouldCreateUser()
+    public async Task user_information_is_valid()
     {
         _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
         _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);
@@ -44,7 +44,7 @@ public class RegisterCommandHandlerTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task Handle_UserWhenUsernameNullOrEmptyString_ShouldThrowNotValidException(string invalidUserName)
+    public async Task when_username_is_null_or_empty_string(string invalidUserName)
     {
         _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
         _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);
@@ -64,7 +64,7 @@ public class RegisterCommandHandlerTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task Handle_UserWhenEmailNullOrEmptyString_ShouldThrowNotValidException(string invalidEmail)
+    public async Task when_email_is_null_or_empty_string(string invalidEmail)
     {
         _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
         _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);
@@ -84,7 +84,7 @@ public class RegisterCommandHandlerTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task Handle_UserWhenPasswordNullOrEmptyString_ShouldThrowNotValidException(string invalidPassword)
+    public async Task when_password_is_null_or_empty_string(string invalidPassword)
     {
         _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
         _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);

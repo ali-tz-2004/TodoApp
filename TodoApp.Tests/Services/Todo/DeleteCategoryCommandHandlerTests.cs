@@ -25,7 +25,7 @@ public class DeleteCategoryCommandHandlerTests
     };
     
     [Fact]
-    public async Task Should_Delete_Category()
+    public async Task when_deleted_successfully()
     {
         var category = new Category(_name, _userId);
         
@@ -42,7 +42,7 @@ public class DeleteCategoryCommandHandlerTests
     }
 
     [Fact]
-    public async Task Should_Not_Delete_Category_If_Not_Found()
+    public async Task when_category_id_or_user_id_not_found()
     {
         var category = new Category(_name, _userId);
         

@@ -25,10 +25,8 @@ public class UpdateCategoryCommandHandlerTests
     };
     
     [Fact]
-    public async Task Handle_Should_Update_Category_When_Valid()
+    public async Task when_update_category_successfully()
     {
-
-        
         var existingCategory  = new Category("OldName", _userId); 
         
         _todoQueryRepository.Setup(x=>x.GetByIdCategory(_id, _userId, CancellationToken.None))
@@ -47,7 +45,7 @@ public class UpdateCategoryCommandHandlerTests
     }
     
     [Fact]
-    public async Task Handle_Should_ThrowNotFoundException_When_Repository_Throws()
+    public async Task when_category_id_or_user_id_not_found()
     {
         _todoQueryRepository.Setup(x=>x.GetByIdCategory(_id, _userId, CancellationToken.None))
             .ThrowsAsync(new NotFoundException(nameof(Category)));

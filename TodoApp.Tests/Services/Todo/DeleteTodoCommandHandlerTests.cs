@@ -54,7 +54,7 @@ public class DeleteTodoCommandHandlerTests
             _categoryId, _userId);
 
         _todoQueryRepositoryMock.Setup(x => x.GetById(_id, _userId, CancellationToken.None))
-            .ThrowsAsync(new NotFoundException("todo not found"));
+            .ThrowsAsync(new NotFoundException(nameof(TodoItem)));
 
         var handler = new DeleteTodoCommandHandler(_todoQueryRepositoryMock.Object, _todoCommandRepository.Object,
             _unitOfWork.Object);

@@ -14,17 +14,12 @@ public class CreateTodoCommandHandlerTests
     private readonly Mock<ITodoQueryRepository> _todoQueryRepoMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
 
-    private CreateTodoRequest CreateRequest() => new()
-    {
-        Title = "Test title",
-        Description = "Test desc",
-        DueDate = DateOnly.FromDateTime(DateTime.Today),
-        CategoryId = 1,
-        UserId = Guid.NewGuid()
-    };
+    private CreateTodoRequest CreateRequest(string title = "test title", string description = "test desc", DateOnly? dueDate = null,
+        int categoryId = 1, Guid? userId = null)
+        => new() { Title = title, Description = description, DueDate = DateOnly.FromDateTime(DateTime.Today), CategoryId = categoryId, UserId = Guid.NewGuid() };
     
     [Fact]
-    public async Task Handle_Should_Create_Todo_When_Valid()
+    public async Task create_todo_success()
     {
         var request = CreateRequest();
 
@@ -42,14 +37,87 @@ public class CreateTodoCommandHandlerTests
         _todoCommandRepoMock.Verify(x => x.CreateTodo(It.IsAny<TodoItem>()), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-
+    
     [Fact]
-    public async Task Handle_Should_Throw_NotFoundException_When_Category_Not_Exist()
+    public async Task category_or_user_not_found()
     {
         var request = CreateRequest();
 
-        _todoQueryRepoMock.Setup(x => x.ExistsCategoryAsync(request.CategoryId, request.UserId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+        _todoQueryRepoMock.Setup(x =>
+            x.ExistsCategoryAsync(request.CategoryId, request.UserId, CancellationToken.None)).ReturnsAsync(false);
+        
+        var handler = new CreateTodoCommandHandler(
+            _todoCommandRepoMock.Object,
+            _todoQueryRepoMock.Object,
+            _unitOfWorkMock.Object
+        );
+        
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(request, CancellationToken.None));
+        
+        Assert.Contains("Category not found", ex.Message);
+        
+        _todoCommandRepoMock.Verify(x=>x.CreateTodo(It.IsAny<TodoItem>()), Times.Never);
+        _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task title_cannot_be_empty(string title)
+    {
+        var request = CreateRequest(title: title);
+
+        _todoQueryRepoMock.Setup(x =>
+            x.ExistsCategoryAsync(request.CategoryId, request.UserId, CancellationToken.None)).ReturnsAsync(true);
+        
+        var handler = new CreateTodoCommandHandler(
+            _todoCommandRepoMock.Object,
+            _todoQueryRepoMock.Object,
+            _unitOfWorkMock.Object
+        );
+        
+        var ex = await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(request, CancellationToken.None));
+        
+        Assert.Contains("title cannot be empty.", ex.Message);
+        
+        _todoCommandRepoMock.Verify(x=>x.CreateTodo(It.IsAny<TodoItem>()), Times.Never);
+        _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task if_description_empty_string_must_be_converted_to_null(string description)
+    {
+        var request = CreateRequest(description: description);
+
+        _todoQueryRepoMock.Setup(x =>
+            x.ExistsCategoryAsync(request.CategoryId, request.UserId, CancellationToken.None)).ReturnsAsync(true);
+        
+        var handler = new CreateTodoCommandHandler(
+            _todoCommandRepoMock.Object,
+            _todoQueryRepoMock.Object,
+            _unitOfWorkMock.Object
+        );
+        
+        await handler.Handle(request, CancellationToken.None);
+        
+        _todoCommandRepoMock.Verify(x =>
+            x.CreateTodo(It.Is<TodoItem>(t => t.Description == null)), Times.Once);
+        
+        _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task due_date_must_be_mapped_correctly()
+    {
+        var dueDate = new DateOnly(2025, 5, 10);
+        var request = CreateRequest(dueDate: dueDate);
+
+        _todoQueryRepoMock.Setup(x =>
+            x.ExistsCategoryAsync(request.CategoryId, request.UserId, CancellationToken.None)).ReturnsAsync(true);
 
         var handler = new CreateTodoCommandHandler(
             _todoCommandRepoMock.Object,
@@ -57,7 +125,10 @@ public class CreateTodoCommandHandlerTests
             _unitOfWorkMock.Object
         );
 
-        await Assert.ThrowsAsync<NotFoundException>(() =>
-            handler.Handle(request, CancellationToken.None));
+        await handler.Handle(request, CancellationToken.None);
+
+        _todoCommandRepoMock.Verify(x =>
+            x.CreateTodo(It.Is<TodoItem>(t => t.DueDate == dueDate)), Times.Once);
+        _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -1,3 +1,4 @@
+using TodoApp.Common.Exceptions;
 using TodoApp.Core.Base;
 using TodoApp.Core.Entities.Auth;
 
@@ -31,6 +32,10 @@ public class TodoItem : BaseEntity<int>
 
     public static TodoItem CreateTodo(string title, string? description, DateOnly? dueDate, int categoryId, Guid userId)
     {
+        if (string.IsNullOrWhiteSpace(title)) throw new NotFoundException("title cannot be empty.");
+        
+        if (string.IsNullOrWhiteSpace(description)) description = null;
+
         var user = new TodoItem(title, description, dueDate, categoryId, userId);
         return user;
     }

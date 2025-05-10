@@ -25,7 +25,7 @@ public class DeleteCategoryCommandHandlerTests
     };
     
     [Fact]
-    public async Task when_deleted_successfully()
+    public async Task when_deleted_category_successfully()
     {
         var category = new Category(_name, _userId);
         

@@ -99,4 +99,23 @@ public class RegisterCommandHandlerTests
         _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
+    
+    [Theory]
+    [InlineData("userExample.com")]
+    [InlineData("user@Examplecom")]
+    public async Task when_email_wrong_pattern(string wrongEmail)
+    {
+        _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
+        _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);
+
+        var request = CreateRequest(email: wrongEmail, password: _password);
+
+        var ex = await Assert.ThrowsAsync<NotValidException>(() =>
+            CreateHandler().Handle(request, CancellationToken.None));
+        
+        Assert.Contains("Email is not valid", ex.Message);
+        
+        _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

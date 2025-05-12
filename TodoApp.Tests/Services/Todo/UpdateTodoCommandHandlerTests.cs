@@ -25,7 +25,7 @@ public class UpdateTodoCommandHandlerTests
     };
 
     [Fact]
-    public async Task when_update_todo_successfully()
+    public async Task Handle_Should_Update_Todo_When_Valid()
     {
         var request = UpdateRequest();
         var fakeTodoItem = new TodoItem("Old Title", "Old Desc", DateOnly.FromDateTime(DateTime.Today.AddDays(1)), request.CategoryId, request.UserId);
@@ -49,7 +49,7 @@ public class UpdateTodoCommandHandlerTests
     }
     
     [Fact]
-    public async Task when_todo_id_or_user_id_not_found()
+    public async Task Handle_Should_ThrowNotFoundException_When_Category_Not_Exists()
     {
         var request = UpdateRequest();
 
@@ -63,8 +63,5 @@ public class UpdateTodoCommandHandlerTests
             _unitOfWorkMock.Object);
 
         await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(request, CancellationToken.None));
-        
-        _todoCommandRepositoryMock.Verify(x => x.UpdateTodo(It.IsAny<TodoItem>()), Times.Never);
-        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

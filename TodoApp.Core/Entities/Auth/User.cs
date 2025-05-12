@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Base;
 using TodoApp.Core.Entities.Todo;
@@ -26,6 +27,8 @@ public class User : BaseEntity<Guid>
 
     public static User CreateUser(string userName, string email, string password, string passwordSalt)
     {
+        var pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
         if (string.IsNullOrWhiteSpace(userName))
             throw new NotValidException("Username cannot be empty");
 
@@ -37,6 +40,9 @@ public class User : BaseEntity<Guid>
 
         if (string.IsNullOrWhiteSpace(passwordSalt))
             throw new NotValidException("Password salt cannot be empty");
+
+        if (!Regex.IsMatch(email, pattern))
+            throw new NotValidException("Email is not valid");
         
         return new User(userName, email, password, passwordSalt);
     }

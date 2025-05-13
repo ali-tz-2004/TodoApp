@@ -28,7 +28,7 @@ public class LoginCommandHandlerTests
     [Fact]
     public async Task when_user_not_found()
     {
-        _userQueryRepositoryMock.Setup(x => x.Login(_username, _password, CancellationToken.None))
+        _userQueryRepositoryMock.Setup(x => x.GetByUserName(_username, CancellationToken.None))
             .Throws(new NotFoundException("Invalid username or password"));
 
         var handler = new LoginCommandHandler(_userQueryRepositoryMock.Object, _encryptionUtilityMock.Object);
@@ -37,7 +37,7 @@ public class LoginCommandHandlerTests
                 handler.Handle(new LoginCommand { UserName = _username, Password = _password },
                     CancellationToken.None));
         
-        _userQueryRepositoryMock.Verify(x => x.Login(_username, _password, CancellationToken.None), Times.Once);
+        _userQueryRepositoryMock.Verify(x => x.GetByUserName(_username, CancellationToken.None), Times.Once);
         _encryptionUtilityMock.Verify(x => x.GetSHA256(_password, _salt), Times.Never);
         _encryptionUtilityMock.Verify(x => x.GetNewToken(It.IsAny<Guid>()), Times.Never);
     }
@@ -48,7 +48,7 @@ public class LoginCommandHandlerTests
         var request = _request();
         var user = new User(_username, _email, _hashedPassword, _salt);
         
-        _userQueryRepositoryMock.Setup(x => x.Login(_username, _password, CancellationToken.None))
+        _userQueryRepositoryMock.Setup(x => x.GetByUserName(_username, CancellationToken.None))
             .ReturnsAsync(user);
         
         _encryptionUtilityMock.Setup(x => x.GetSHA256(_password, _salt))  
@@ -64,7 +64,7 @@ public class LoginCommandHandlerTests
         Assert.Equal(result.UserName, _username);
         Assert.Equal(result.Token, _token);
         
-        _userQueryRepositoryMock.Verify(x => x.Login(_username, _password, CancellationToken.None), Times.Once);
+        _userQueryRepositoryMock.Verify(x => x.GetByUserName(_username, CancellationToken.None), Times.Once);
         _encryptionUtilityMock.Verify(x => x.GetNewToken(user.Id), Times.Once);  
         _encryptionUtilityMock.Verify(x => x.GetSHA256(_password, _salt), Times.Once);
     }
@@ -74,7 +74,7 @@ public class LoginCommandHandlerTests
     {
         var user = new User(_username, _email, "_hashedPassword", _salt);
         
-        _userQueryRepositoryMock.Setup(x => x.Login(_username, _password, CancellationToken.None))
+        _userQueryRepositoryMock.Setup(x => x.GetByUserName(_username, CancellationToken.None))
             .ReturnsAsync(user);
         
         _encryptionUtilityMock.Setup(x => x.GetSHA256(_password, _salt))  
@@ -86,7 +86,7 @@ public class LoginCommandHandlerTests
             handler.Handle(new LoginCommand { UserName = _username, Password = _password },
                 CancellationToken.None));
         
-        _userQueryRepositoryMock.Verify(x => x.Login(_username, _password, CancellationToken.None), Times.Once);
+        _userQueryRepositoryMock.Verify(x => x.GetByUserName(_username, CancellationToken.None), Times.Once);
         _encryptionUtilityMock.Verify(x => x.GetSHA256(_password, _salt), Times.Once);
         _encryptionUtilityMock.Verify(x => x.GetNewToken(user.Id), Times.Never);  
     }

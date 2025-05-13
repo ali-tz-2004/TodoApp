@@ -22,6 +22,7 @@ public static class ExceptionMiddlewareExtensions
                     NotFoundException => StatusCodes.Status404NotFound,
                     UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
                     NotValidException => StatusCodes.Status400BadRequest,
+                    ConflictException => StatusCodes.Status409Conflict,
                     _ => StatusCodes.Status500InternalServerError
                 };
 

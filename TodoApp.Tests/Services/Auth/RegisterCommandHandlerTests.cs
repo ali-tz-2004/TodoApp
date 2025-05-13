@@ -11,7 +11,8 @@ namespace TodoApp.Tests.Services.Auth;
 public class RegisterCommandHandlerTests
 {
     private readonly Mock<IEncryptionUtility> _encryptionMock = new();
-    private readonly Mock<IUserCommandRepository> _userRepoMock = new();
+    private readonly Mock<IUserCommandRepository> _userCommandRepositoryMock = new();
+    private readonly Mock<IUserQueryRepository> _userQueryRepositoryMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     
     private readonly string _salt = Guid.NewGuid().ToString();
@@ -19,7 +20,7 @@ public class RegisterCommandHandlerTests
     private readonly string _password = "password";
     
     private RegisterCommandHandler CreateHandler() =>
-        new(_encryptionMock.Object, _userRepoMock.Object, _unitOfWorkMock.Object);
+        new(_encryptionMock.Object, _userCommandRepositoryMock.Object, _userQueryRepositoryMock.Object, _unitOfWorkMock.Object);
     
     private RegisterCommand CreateRequest(string username = "testuser", string email = "test@example.com", string password = "pass123")
         => new() { UserName = username, Email = email, Password = password };
@@ -27,13 +28,17 @@ public class RegisterCommandHandlerTests
     [Fact]
     public async Task user_information_is_valid()
     {
+        var request = CreateRequest(password: _password);
+
         _encryptionMock.Setup(e => e.GetNewSalt()).Returns(_salt);
         _encryptionMock.Setup(e => e.GetSHA256(_password, _salt)).Returns(_hashedPassword);
 
-        var request = CreateRequest(password: _password);
+        _userQueryRepositoryMock.Setup(x=>x.ExistsByUserName(request.UserName, CancellationToken.None)).ReturnsAsync(false);
+        _userQueryRepositoryMock.Setup(x=>x.ExistsByEmail(request.Email, CancellationToken.None)).ReturnsAsync(false);
+
         await CreateHandler().Handle(request, CancellationToken.None);
         
-        _userRepoMock.Verify(r => r.CreateUser(It.Is<User>(
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.Is<User>(
             u => u.UserName == request.UserName && u.Email == request.Email)), Times.Once);
         
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -55,7 +60,7 @@ public class RegisterCommandHandlerTests
         
         Assert.Contains("Username cannot be empty", ex.Message);
         
-        _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
     
@@ -75,7 +80,7 @@ public class RegisterCommandHandlerTests
         
         Assert.Contains("Email cannot be empty", ex.Message);
         
-        _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
     
@@ -95,7 +100,7 @@ public class RegisterCommandHandlerTests
         
         Assert.Contains("Password cannot be empty", ex.Message);
         
-        _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
     
@@ -114,7 +119,44 @@ public class RegisterCommandHandlerTests
         
         Assert.Contains("Email is not valid", ex.Message);
         
-        _userRepoMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    [Fact]
+    public async Task when_userName_is_conflict()
+    {
+        var request = CreateRequest();
+        
+        _userQueryRepositoryMock.Setup(x=>x.ExistsByUserName(request.UserName, CancellationToken.None)).ReturnsAsync(true);
+
+        var ex = await Assert.ThrowsAsync<ConflictException>(() =>
+            CreateHandler().Handle(request, CancellationToken.None));
+        
+        Assert.Contains("UserName already exists", ex.Message);
+        
+        _encryptionMock.Verify(r => r.GetNewSalt(), Times.Never);
+        _encryptionMock.Verify(u => u.GetSHA256(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+    [Fact]
+    public async Task when_password_is_conflict()
+    {
+        var request = CreateRequest();
+        
+        _userQueryRepositoryMock.Setup(x=>x.ExistsByUserName(request.UserName, CancellationToken.None)).ReturnsAsync(false);
+        _userQueryRepositoryMock.Setup(x=>x.ExistsByEmail(request.Email, CancellationToken.None)).ReturnsAsync(true);
+
+        var ex = await Assert.ThrowsAsync<ConflictException>(() =>
+            CreateHandler().Handle(request, CancellationToken.None));
+        
+        Assert.Contains("Email already exists", ex.Message);
+        
+        _encryptionMock.Verify(r => r.GetNewSalt(), Times.Never);
+        _encryptionMock.Verify(u => u.GetSHA256(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _userCommandRepositoryMock.Verify(r => r.CreateUser(It.IsAny<User>()), Times.Never);
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

@@ -1,6 +1,6 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands;
+using TodoApp.Application.Todo.Commands.DeleteCategoryCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -18,7 +18,7 @@ public class DeleteCategoryCommandHandlerTests
     private readonly Guid _userId = Guid.NewGuid();
     private readonly string _name = "Test";
 
-    private  DeleteCategoryRequest _categoryRequest => new()
+    private  DeleteCategoryCommand CategoryCommand => new()
     {
         Id = _id,
         UserId = _userId,
@@ -35,7 +35,7 @@ public class DeleteCategoryCommandHandlerTests
         var handler = new DeleteCategoryCommandHandler(_todoCommandRepositoryMock.Object,
             _todoQueryRepositoryMock.Object, _unitOfWorkMock.Object);
         
-        await handler.Handle(_categoryRequest, CancellationToken.None);
+        await handler.Handle(CategoryCommand, CancellationToken.None);
         
         _todoCommandRepositoryMock.Verify(x=>x.DeleteCategory(category), Times.Once);
         _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(CancellationToken.None), Times.Once);
@@ -52,7 +52,7 @@ public class DeleteCategoryCommandHandlerTests
         var handler = new DeleteCategoryCommandHandler(_todoCommandRepositoryMock.Object,
             _todoQueryRepositoryMock.Object, _unitOfWorkMock.Object);
         
-        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(_categoryRequest, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(CategoryCommand, CancellationToken.None));
         
         _todoCommandRepositoryMock.Verify(x=>x.DeleteCategory(category), Times.Never);
         _unitOfWorkMock.Verify(x=>x.SaveChangesAsync(CancellationToken.None), Times.Never);

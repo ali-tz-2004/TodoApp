@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TodoApp.Application.Dto.Auth.Request;
-using TodoApp.Application.Dto.Auth.Response;
+using TodoApp.Application.Auth.Commands.LoginCommand;
+using TodoApp.Application.Auth.Commands.RegisterCommand;
 using TodoApp.Common.ResponseHanlder;
 
 
@@ -13,16 +13,16 @@ namespace TodoApp.Api.Controllers;
 public class AuthController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult> Register([FromBody] RegisterRequest registerRequest)
+    public async Task<ActionResult> Register([FromBody] RegisterCommand registerCommand)
     {
-        await mediator.Send(registerRequest);
+        await mediator.Send(registerCommand);
         return Ok();
     }
     
     [HttpPost]
-    public async Task<ActionResult> Login([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult> Login([FromBody] LoginCommand loginCommand)
     {
-        var result = await mediator.Send(loginRequest);
+        var result = await mediator.Send(loginCommand);
         return Ok(ApiResponse<LoginResponse>.SuccessResponse(result));
     }
 }

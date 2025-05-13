@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Common", "TodoApp.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Tests", "TodoApp.Tests\TodoApp.Tests.csproj", "{BC4B7955-EF1E-4C66-8871-7F44711A124E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.Tests.Integration", "TodoApp.Tests.Integration\TodoApp.Tests.Integration.csproj", "{FAC03D2B-16D8-440D-B3E3-1FCDAF0182A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{BC4B7955-EF1E-4C66-8871-7F44711A124E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC4B7955-EF1E-4C66-8871-7F44711A124E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC4B7955-EF1E-4C66-8871-7F44711A124E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAC03D2B-16D8-440D-B3E3-1FCDAF0182A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAC03D2B-16D8-440D-B3E3-1FCDAF0182A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAC03D2B-16D8-440D-B3E3-1FCDAF0182A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAC03D2B-16D8-440D-B3E3-1FCDAF0182A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

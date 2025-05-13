@@ -1,6 +1,5 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands.CreateTodoCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -14,7 +13,7 @@ public class CreateTodoCommandHandlerTests
     private readonly Mock<ITodoQueryRepository> _todoQueryRepoMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
 
-    private CreateTodoRequest CreateRequest(string title = "test title", string description = "test desc", DateOnly? dueDate = null,
+    private CreateTodoCommand CreateRequest(string title = "test title", string description = "test desc", DateOnly? dueDate = null,
         int categoryId = 1, Guid? userId = null)
         => new() { Title = title, Description = description, DueDate = DateOnly.FromDateTime(DateTime.Today), CategoryId = categoryId, UserId = Guid.NewGuid() };
     

@@ -1,6 +1,6 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands;
+using TodoApp.Application.Todo.Commands.UpdateCategoryCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -17,7 +17,7 @@ public class UpdateCategoryCommandHandlerTests
     private int _id = 1;
     private Guid _userId = Guid.NewGuid();
     
-    private UpdateCategoryRequest _request => new()
+    private UpdateCategoryCommand Command => new()
     {
         Id = _id,
         UserId = _userId,
@@ -36,7 +36,7 @@ public class UpdateCategoryCommandHandlerTests
 
 
         
-        await handler.Handle(_request, CancellationToken.None);
+        await handler.Handle(Command, CancellationToken.None);
         
         _todoCommandRepository.Verify(x=>x.UpdateCategory(It.IsAny<Category>()), Times.Once);
         _unitOfWork.Verify(x=>x.SaveChangesAsync(CancellationToken.None));
@@ -52,7 +52,7 @@ public class UpdateCategoryCommandHandlerTests
 
         var handler = new UpdateCategoryCommandHandler(_todoQueryRepository.Object, _todoCommandRepository.Object, _unitOfWork.Object);
 
-        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(_request, CancellationToken.None));
+        await Assert.ThrowsAsync<NotFoundException>(() => handler.Handle(Command, CancellationToken.None));
         
         _todoCommandRepository.Verify(x=>x.UpdateCategory(It.IsAny<Category>()), Times.Never());
         _unitOfWork.Verify(x=>x.SaveChangesAsync(CancellationToken.None), Times.Never());

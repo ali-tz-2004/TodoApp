@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TodoApp.Application.Dto.Todo.Requests;
+using TodoApp.Application.Todo.Commands.CreateCategoryCommand;
+using TodoApp.Application.Todo.Commands.DeleteCategoryCommand;
+using TodoApp.Application.Todo.Commands.UpdateCategoryCommand;
 using TodoApp.Common.ResponseHanlder;
 
 namespace TodoApp.Api.Controllers;
@@ -12,25 +14,25 @@ public class CategoryController(IMediator mediator) : ControllerBase
 {
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<ApiResponse>> CreateCategory(CreateCategoryRequest createCategoryRequest)
+    public async Task<ActionResult<ApiResponse>> CreateCategory(CreateCategoryCommand createCategoryCommand)
     {
-        await mediator.Send(createCategoryRequest);
+        await mediator.Send(createCategoryCommand);
         return Ok();
     }
     
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult> UpdateCategory(UpdateCategoryRequest updateCategoryRequest)
+    public async Task<ActionResult> UpdateCategory(UpdateCategoryCommand updateCategoryCommand)
     {
-        await mediator.Send(updateCategoryRequest);
+        await mediator.Send(updateCategoryCommand);
         return Ok();
     }
     
     [Authorize]
     [HttpDelete]
-    public async Task<ActionResult> DeleteCategory(DeleteCategoryRequest deleteCategoryRequest)
+    public async Task<ActionResult> DeleteCategory(DeleteCategoryCommand deleteCategoryCommand)
     {
-        await mediator.Send(deleteCategoryRequest);
+        await mediator.Send(deleteCategoryCommand);
         return Ok();
     }
 }

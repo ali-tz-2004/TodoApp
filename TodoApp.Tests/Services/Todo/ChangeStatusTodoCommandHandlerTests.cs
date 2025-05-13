@@ -1,6 +1,5 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands.ChangeStatusTodoCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -18,7 +17,7 @@ public class ChangeStatusTodoCommandHandlerTests
     private readonly Guid _userId = Guid.NewGuid();
     private readonly int _categoryId = 1;
 
-    private ChangeStatusTodoRequest _request() => new()
+    private ChangeStatusTodoCommand _request() => new()
     {
         Id = _requestId,
         UserId = _userId,

@@ -1,6 +1,6 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands;
+using TodoApp.Application.Todo.Commands.UpdateTodoCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -14,7 +14,7 @@ public class UpdateTodoCommandHandlerTests
     private readonly Mock<ITodoQueryRepository> _todoQueryRepository = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
 
-    private UpdateTodoRequest UpdateRequest() => new()
+    private UpdateTodoCommand UpdateRequest() => new()
     {
         Id = 1,
         Title = "Test title",

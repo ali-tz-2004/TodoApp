@@ -1,8 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Dto.Todo.Response;
+using TodoApp.Application.Todo.Commands.ChangeStatusTodoCommand;
+using TodoApp.Application.Todo.Commands.CreateTodoCommand;
+using TodoApp.Application.Todo.Commands.DeleteTodoCommand;
+using TodoApp.Application.Todo.Commands.UpdateTodoCommand;
+using TodoApp.Application.Todo.Queries.GetAllTodoQuery;
+using TodoApp.Application.Todo.Queries.GetTodoQuery;
 using TodoApp.Common.DtoHandler;
 using TodoApp.Common.ResponseHanlder;
 
@@ -14,49 +18,49 @@ public class TodoController(IMediator mediator) : ControllerBase
 {
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<ApiResponse>> CreateTodo([FromBody] CreateTodoRequest createTodoRequest)
+    public async Task<ActionResult<ApiResponse>> CreateTodo([FromBody] CreateTodoCommand createTodoCommand)
     {
-        await mediator.Send(createTodoRequest);
+        await mediator.Send(createTodoCommand);
         return Ok();
     }
     
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<ApiResponse>> UpdateTodo([FromBody] UpdateTodoRequest updateTodoRequest)
+    public async Task<ActionResult<ApiResponse>> UpdateTodo([FromBody] UpdateTodoCommand updateTodoCommand)
     {
-        await mediator.Send(updateTodoRequest);
+        await mediator.Send(updateTodoCommand);
         return Ok();
     }
 
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<ApiResponse>> GetAll([FromQuery] GetAllTodoRequest getAllTodoRequest)
+    public async Task<ActionResult<ApiResponse>> GetAll([FromQuery] GetAllTodoQuery getAllTodoQuery)
     {
-        var result = await mediator.Send(getAllTodoRequest);
+        var result = await mediator.Send(getAllTodoQuery);
         return Ok(ApiResponse<PaginationResponse<GetAllTodoResponse>>.SuccessResponse(result));
     }
     
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<ApiResponse>> Get([FromQuery] GetTodoRequest getTodoRequest)
+    public async Task<ActionResult<ApiResponse>> Get([FromQuery] GetTodoQuery getTodoQuery)
     {
-        var result = await mediator.Send(getTodoRequest);
+        var result = await mediator.Send(getTodoQuery);
         return Ok(ApiResponse<GetTodoResponse>.SuccessResponse(result));
     }
     
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<ApiResponse>> Status([FromBody] ChangeStatusTodoRequest changeStatusTodoRequest)
+    public async Task<ActionResult<ApiResponse>> Status([FromBody] ChangeStatusTodoCommand changeStatusTodoCommand)
     {
-        await mediator.Send(changeStatusTodoRequest);
+        await mediator.Send(changeStatusTodoCommand);
         return Ok(ApiResponse.SuccessResponse());
     }
     
     [Authorize]
     [HttpDelete]
-    public async Task<ActionResult<ApiResponse>> Delete([FromBody] DeleteTodoRequest deleteTodoRequest)
+    public async Task<ActionResult<ApiResponse>> Delete([FromBody] DeleteTodoCommand deleteTodoCommand)
     {
-        await mediator.Send(deleteTodoRequest);
+        await mediator.Send(deleteTodoCommand);
         return Ok(ApiResponse.SuccessResponse());
     }
 }

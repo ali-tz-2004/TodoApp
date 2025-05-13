@@ -1,6 +1,5 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands.CreateCategoryCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -18,7 +17,7 @@ public class CreateCategoryCommandHandlerTests
     {
         var handler = new CreateCategoryCommandHandler(_todoCommandRepositoryMock.Object, _unitOfWorkMock.Object);
 
-        var request = new CreateCategoryRequest()
+        var request = new CreateCategoryCommand()
         {
             Name = "Name",
             UserId = Guid.NewGuid()
@@ -38,7 +37,7 @@ public class CreateCategoryCommandHandlerTests
     {
         var handler = new CreateCategoryCommandHandler(_todoCommandRepositoryMock.Object, _unitOfWorkMock.Object);
 
-        var request = new CreateCategoryRequest()
+        var request = new CreateCategoryCommand()
         {
             Name = name,
             UserId = Guid.NewGuid()

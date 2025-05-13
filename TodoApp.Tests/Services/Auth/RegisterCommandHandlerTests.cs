@@ -1,6 +1,5 @@
 using Moq;
-using TodoApp.Application.Dto.Auth.Request;
-using TodoApp.Application.Services.Auth.Command;
+using TodoApp.Application.Auth.Commands.RegisterCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Common.Utilities;
@@ -22,7 +21,7 @@ public class RegisterCommandHandlerTests
     private RegisterCommandHandler CreateHandler() =>
         new(_encryptionMock.Object, _userRepoMock.Object, _unitOfWorkMock.Object);
     
-    private RegisterRequest CreateRequest(string username = "testuser", string email = "test@example.com", string password = "pass123")
+    private RegisterCommand CreateRequest(string username = "testuser", string email = "test@example.com", string password = "pass123")
         => new() { UserName = username, Email = email, Password = password };
     
     [Fact]

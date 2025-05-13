@@ -1,6 +1,6 @@
 using Moq;
-using TodoApp.Application.Dto.Todo.Requests;
-using TodoApp.Application.Services.Todo.Commands;
+using TodoApp.Application.Todo.Commands;
+using TodoApp.Application.Todo.Commands.DeleteTodoCommand;
 using TodoApp.Common;
 using TodoApp.Common.Exceptions;
 using TodoApp.Core.Entities.Todo;
@@ -18,7 +18,7 @@ public class DeleteTodoCommandHandlerTests
     private readonly int _id = 1;
     private readonly int _categoryId = 1;
 
-    private DeleteTodoRequest _request() => new()
+    private DeleteTodoCommand _request() => new()
     {
         Id = _id,
         UserId = _userId,

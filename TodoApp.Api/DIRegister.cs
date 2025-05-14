@@ -18,7 +18,10 @@ public static class DIRegister
             options.UseSqlServer(configuration.GetConnectionString("CommandDbConnection")));
         services.AddDbContext<TodoAppQueryDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("QueryDbConnection")));
-
+    }
+    
+    public static void AddAppServices(this IServiceCollection services, IConfiguration configuration)
+    {
         services.AddScoped<IUserCommandRepository, UserCommandRepository>();
         services.AddScoped<IUserQueryRepository, UserQueryRepository>();
         services.AddScoped<ITodoCommandRepository, TodoCommandRepository>();

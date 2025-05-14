@@ -142,7 +142,7 @@ public class RegisterCommandHandlerTests
     }
     
     [Fact]
-    public async Task when_password_is_conflict()
+    public async Task when_email_is_conflict()
     {
         var request = CreateRequest();
         

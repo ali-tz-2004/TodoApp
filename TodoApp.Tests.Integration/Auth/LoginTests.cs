@@ -7,22 +7,16 @@ using TodoApp.Application.Auth.Commands.RegisterCommand;
 using TodoApp.Common.ResponseHanlder;
 using TodoApp.Common.Utilities;
 using TodoApp.Core.Entities.Auth;
-using TodoApp.Infrastructure;
 
 namespace TodoApp.Tests.Integration.Auth;
 
-public class LoginTests : IClassFixture<CustomWebApplicationFactory>,IAsyncDisposable
+public class LoginTests : IntegrationTestBase, IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly HttpClient _client;
-    private readonly TodoAppCommandDbContext _commandDbContext;
     private readonly IEncryptionUtility _encryptionUtility;
 
-
-    public LoginTests(CustomWebApplicationFactory factory)
+    public LoginTests(CustomWebApplicationFactory factory) : base(factory)
     {
         var services = factory.Services.CreateScope().ServiceProvider;
-        _commandDbContext = services.GetRequiredService<TodoAppCommandDbContext>();
-        _client = factory.CreateClient();
         _encryptionUtility = services.GetRequiredService<IEncryptionUtility>();
     }
 
@@ -40,7 +34,7 @@ public class LoginTests : IClassFixture<CustomWebApplicationFactory>,IAsyncDispo
         
         Assert.NotEqual(hashPassword, user.Password);
         
-        var response = await _client.PostAsJsonAsync("/Auth/Login", command);
+        var response = await Client.PostAsJsonAsync("/Auth/Login", command);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
@@ -55,7 +49,7 @@ public class LoginTests : IClassFixture<CustomWebApplicationFactory>,IAsyncDispo
             Password = "password" 
         };
 
-        var response = await _client.PostAsJsonAsync("/Auth/Login", loginCommand);
+        var response = await Client.PostAsJsonAsync("/Auth/Login", loginCommand);
     
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     
@@ -70,8 +64,8 @@ public class LoginTests : IClassFixture<CustomWebApplicationFactory>,IAsyncDispo
         var user = User.CreateUser(email: "test@gmail.com", password: "password", userName: "test",
             passwordSalt: "salt");
         
-        _commandDbContext.Users.Add(user);
-        _commandDbContext.SaveChanges();
+        CommandDbContext.Users.Add(user);
+        CommandDbContext.SaveChanges();
         
         return user;
     }
@@ -85,13 +79,7 @@ public class LoginTests : IClassFixture<CustomWebApplicationFactory>,IAsyncDispo
             Email = email
         };
 
-        var response = await _client.PostAsJsonAsync("/Auth/Register", registerCommand);
+        var response = await Client.PostAsJsonAsync("/Auth/Register", registerCommand);
         response.EnsureSuccessStatusCode();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _commandDbContext.Database.EnsureDeletedAsync();
-        await _commandDbContext.Database.EnsureCreatedAsync();
     }
 }

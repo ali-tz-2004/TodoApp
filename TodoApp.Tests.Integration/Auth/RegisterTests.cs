@@ -2,23 +2,15 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TodoApp.Application.Auth.Commands.RegisterCommand;
 using TodoApp.Core.Entities.Auth;
-using TodoApp.Infrastructure;
 
 namespace TodoApp.Tests.Integration.Auth;
 
-public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncDisposable
+public class RegisterTests : IntegrationTestBase, IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly HttpClient _client;
-    private readonly TodoAppCommandDbContext _commandDbContext;
-
-    public RegisterTests(CustomWebApplicationFactory factory)
+    public RegisterTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        _client = factory.CreateClient();
-        var services = factory.Services.CreateScope().ServiceProvider;
-        _commandDbContext = services.GetRequiredService<TodoAppCommandDbContext>();
     }
 
     [Fact]
@@ -31,11 +23,11 @@ public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncD
             Email = "admin@admin.com",
         };
 
-        var response = await _client.PostAsJsonAsync("/Auth/Register", command);
+        var response = await Client.PostAsJsonAsync("/Auth/Register", command);
 
         response.IsSuccessStatusCode.Should().BeTrue();
 
-        var user = await _commandDbContext.Users.FirstOrDefaultAsync(u => u.Email == command.Email);
+        var user = await CommandDbContext.Users.FirstOrDefaultAsync(u => u.Email == command.Email);
 
         user.Should().NotBeNull();
     }
@@ -52,7 +44,7 @@ public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncD
             Email = "userTest@gmail.com",
         };
 
-        var response = await _client.PostAsJsonAsync("/Auth/Register", command);
+        var response = await Client.PostAsJsonAsync("/Auth/Register", command);
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
@@ -68,7 +60,7 @@ public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncD
             Email = user.Email,
         };
 
-        var response = await _client.PostAsJsonAsync("/Auth/Register", command);
+        var response = await Client.PostAsJsonAsync("/Auth/Register", command);
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
@@ -77,15 +69,9 @@ public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncD
         var user = User.CreateUser(email: "test@gmail.com", password: "password", userName: "test",
             passwordSalt: "salt");
         
-        _commandDbContext.Users.Add(user);
-        _commandDbContext.SaveChanges();
+        CommandDbContext.Users.Add(user);
+        CommandDbContext.SaveChanges();
         
         return user;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _commandDbContext.Database.EnsureDeletedAsync();
-        await _commandDbContext.Database.EnsureCreatedAsync();
     }
 }

@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using TodoApp.Api;
 using TodoApp.Infrastructure;
@@ -16,6 +16,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         
         builder.ConfigureServices(services =>
         {
+            RemoveDbContext<TodoAppCommandDbContext>(services);
+            RemoveDbContext<TodoAppQueryDbContext>(services);
+
             services.AddDbContext<TodoAppCommandDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestDb");
@@ -36,5 +39,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             queryDb.Database.EnsureCreated();
             
         });
+    }
+
+    private static void RemoveDbContext<TDbContext>(IServiceCollection services) where TDbContext : DbContext
+    {
+        var dbContext = services.SingleOrDefault(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<TDbContext>));
+        
+        if (dbContext == null) return;
+        
+        services.Remove(dbContext);
     }
 }

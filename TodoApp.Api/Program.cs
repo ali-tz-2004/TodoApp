@@ -19,11 +19,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
         builder.Services.AddAppServices(builder.Configuration);
-        
-        if (!builder.Environment.IsEnvironment("Test"))
-        {
-            ConfigureDatabase(builder.Services, builder.Configuration);
-        }
+        builder.Services.AddDatabaseConfig(builder.Configuration);
 
         builder.Services.Configure<Configs>(builder.Configuration.GetSection("Configs"));
 
@@ -71,14 +67,5 @@ public class Program
         app.MapControllers();
 
         app.Run();
-    }
-    
-    public static void ConfigureDatabase(IServiceCollection services, IConfiguration configuration)
-    {
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (env == "Test")
-            return;
-
-        services.AddDatabaseConfig(configuration);
     }
 }

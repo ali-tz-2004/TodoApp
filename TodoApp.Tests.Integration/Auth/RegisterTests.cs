@@ -4,91 +4,88 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TodoApp.Application.Auth.Commands.RegisterCommand;
+using TodoApp.Core.Entities.Auth;
 using TodoApp.Infrastructure;
 
 namespace TodoApp.Tests.Integration.Auth;
 
-public class RegisterTests : IClassFixture<CustomWebApplicationFactory>
+public class RegisterTests : IClassFixture<CustomWebApplicationFactory>, IAsyncDisposable
 {
     private readonly HttpClient _client;
-    private readonly CustomWebApplicationFactory _factory;
-
+    private readonly TodoAppCommandDbContext _commandDbContext;
 
     public RegisterTests(CustomWebApplicationFactory factory)
     {
-        _factory = factory;
         _client = factory.CreateClient();
+        var services = factory.Services.CreateScope().ServiceProvider;
+        _commandDbContext = services.GetRequiredService<TodoAppCommandDbContext>();
     }
 
-    private async Task CreateRegisterUser(string username = "userTest", string password = "passwordTest", string email = "test@gmail.com")
+    [Fact]
+    public async Task register_with_valid_data_should_return_ok()
     {
         var command = new RegisterCommand()
         {
-            UserName = username,
-            Password = password,
-            Email = email,
+            UserName = "admin",
+            Password = "password",
+            Email = "admin@admin.com",
         };
 
         var response = await _client.PostAsJsonAsync("/Auth/Register", command);
 
         response.IsSuccessStatusCode.Should().BeTrue();
 
-        using (var scope = _factory.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<TodoAppCommandDbContext>();
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == "test@gmail.com");
+        var user = await _commandDbContext.Users.FirstOrDefaultAsync(u => u.Email == command.Email);
 
-            user.Should().NotBeNull();
-        }
-    }
-    
-    private async Task ResetDatabaseAsync()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<TodoAppCommandDbContext>();
-        await dbContext.Database.EnsureDeletedAsync();
-        await dbContext.Database.EnsureCreatedAsync();
-    }
-
-    [Fact]
-    public async Task register_with_valid_data_should_return_ok()
-    {
-        await ResetDatabaseAsync();
-        await CreateRegisterUser();
+        user.Should().NotBeNull();
     }
 
     [Fact]
     public async Task register_with_duplicate_username_should_return_Conflict()
     {
-        await ResetDatabaseAsync();
-        await CreateRegisterUser();
-
-        var secondCommand = new RegisterCommand()
+        var user = SeedUser();
+        
+        var command = new RegisterCommand()
         {
-            UserName = "userTest", 
+            UserName = user.UserName,
             Password = "password",
             Email = "userTest@gmail.com",
         };
 
-        var secondResponse = await _client.PostAsJsonAsync("/Auth/Register", secondCommand);
-        secondResponse.StatusCode.Should().Be(HttpStatusCode.Conflict); 
+        var response = await _client.PostAsJsonAsync("/Auth/Register", command);
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
-    
+
     [Fact]
     public async Task register_with_duplicate_email_should_return_Conflict()
     {
-        await ResetDatabaseAsync();
-        await CreateRegisterUser();
-
-        var secondCommand = new RegisterCommand()
+        var user = SeedUser();
+        
+        var command = new RegisterCommand()
         {
-            UserName = "userTest2", 
+            UserName = "userTest2",
             Password = "password",
-            Email = "test@gmail.com",
+            Email = user.Email,
         };
 
-        var secondResponse = await _client.PostAsJsonAsync("/Auth/Register", secondCommand);
-        secondResponse.StatusCode.Should().Be(HttpStatusCode.Conflict); 
+        var response = await _client.PostAsJsonAsync("/Auth/Register", command);
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
+    private User SeedUser()
+    {
+        var user = User.CreateUser(email: "test@gmail.com", password: "password", userName: "test",
+            passwordSalt: "salt");
+        
+        _commandDbContext.Users.Add(user);
+        _commandDbContext.SaveChanges();
+        
+        return user;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _commandDbContext.Database.EnsureDeletedAsync();
+        await _commandDbContext.Database.EnsureCreatedAsync();
+    }
 }

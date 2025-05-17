@@ -50,7 +50,7 @@ public class TodoController(IMediator mediator) : ControllerBase
     
     [Authorize]
     [HttpPut]
-    public async Task<ActionResult<ApiResponse>> Status([FromBody] ChangeStatusTodoCommand changeStatusTodoCommand)
+    public async Task<ActionResult<ApiResponse>> ChangeStatus([FromBody] ChangeStatusTodoCommand changeStatusTodoCommand)
     {
         await mediator.Send(changeStatusTodoCommand);
         return Ok(ApiResponse.SuccessResponse());

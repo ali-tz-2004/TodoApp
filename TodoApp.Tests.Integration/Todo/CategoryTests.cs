@@ -41,14 +41,19 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
 
         var response = await Client.PostAsJsonAsync("/Category/CreateCategory", categoryCommand);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var category = await CommandDbContext.Categories.AsNoTracking().SingleAsync();
+        category.Name.Should().Be("Test");
+        category.UserId.Should().Be(UserId);
     }
 
     [Fact]
     public async Task update_category_when_without_authorization()
     {
+        var category = SeedCategory();
         var categoryCommand = new UpdateCategoryCommand
         {
-            Id = 1,
+            Id = category.Id,
             Name = "Test",
             UserId = UserId
         };
@@ -72,6 +77,14 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
 
         var response = await Client.PutAsJsonAsync("/Category/UpdateCategory", categoryCommand);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var categoryUpdated = await CommandDbContext.Categories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x=>x.Id == category.Id);
+        
+        categoryUpdated.Should().NotBeNull();
+        categoryUpdated!.Name.Should().Be("Test1");
+        categoryUpdated.UserId.Should().Be(UserId);
     }
     
     

@@ -26,6 +26,9 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
 
         var response = await Client.PostAsJsonAsync("/Category/CreateCategory", categoryCommand);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        
+        var category = await CommandDbContext.TodoItems.AsNoTracking().ToListAsync();
+        category.Should().BeEmpty();
     }
 
     [Fact]
@@ -43,7 +46,7 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var category = await CommandDbContext.Categories.AsNoTracking().SingleAsync();
-        category.Name.Should().Be("Test");
+        category.Name.Should().Be(categoryCommand.Name);
         category.UserId.Should().Be(UserId);
     }
 
@@ -54,12 +57,16 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
         var categoryCommand = new UpdateCategoryCommand
         {
             Id = category.Id,
-            Name = "Test",
+            Name = "Test1",
             UserId = UserId
         };
 
         var response = await Client.PutAsJsonAsync("/Category/UpdateCategory", categoryCommand);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        
+        var mainCategory = await CommandDbContext.Categories.AsNoTracking().FirstAsync(x=>x.Id == category.Id);
+        mainCategory.Name.Should().Be(category.Name);
+        mainCategory.UserId.Should().Be(UserId);
     }
 
     [Fact]
@@ -80,10 +87,10 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
         
         var categoryUpdated = await CommandDbContext.Categories
             .AsNoTracking()
-            .FirstOrDefaultAsync(x=>x.Id == category.Id);
+            .FirstAsync(x=>x.Id == category.Id);
         
         categoryUpdated.Should().NotBeNull();
-        categoryUpdated!.Name.Should().Be("Test1");
+        categoryUpdated.Name.Should().Be(categoryCommand.Name);
         categoryUpdated.UserId.Should().Be(UserId);
     }
     
@@ -107,6 +114,10 @@ public class CategoryTests : IntegrationTestBase, IClassFixture<CustomWebApplica
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        
+        var mainCategory = await CommandDbContext.Categories.AsNoTracking().FirstAsync(x=>x.Id == category.Id);
+        mainCategory.Name.Should().Be(category.Name);
+        mainCategory.UserId.Should().Be(UserId);
     }
 
     [Fact]

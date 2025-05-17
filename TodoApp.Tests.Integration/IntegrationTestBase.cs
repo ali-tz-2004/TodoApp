@@ -1,9 +1,11 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TodoApp.Application.Auth.Commands.LoginCommand;
 using TodoApp.Application.Auth.Commands.RegisterCommand;
 using TodoApp.Common.ResponseHanlder;
+using TodoApp.Core.Entities.Auth;
 using TodoApp.Infrastructure;
 using TodoApp.Tests.Integration;
 
@@ -13,6 +15,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     protected readonly TodoAppCommandDbContext CommandDbContext;
     private readonly IServiceScope _scope;
     private readonly CustomWebApplicationFactory _factory;
+    protected Guid UserId;
 
     protected IntegrationTestBase(CustomWebApplicationFactory factory)
     {
@@ -45,6 +48,9 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
         var token = apiResponse!.Data.Token;
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        var user = await CommandDbContext.Users.FirstAsync(u => u.UserName == "testuser");
+        UserId = user.Id;
     }
 
     public async Task InitializeAsync()
